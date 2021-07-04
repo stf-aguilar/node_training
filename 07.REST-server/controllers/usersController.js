@@ -28,11 +28,22 @@ const usersPost = async(req, res = response) => {
     })
 }
 
-const usersPut = (req, res = response) => {
+const usersPut = async(req, res = response) => {
     const { id } = req.params;
+    const { _id, password, google, correo, ...resto } = req.body;
+
+    //TODO validar contra la base de datos
+    if( password ){
+        //Encriptar la contraseña
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync( password, salt );
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate( id, resto);
+
     res.json({
         msj: 'put API - controllers',
-        id
+        usuario
     })
 }
 
